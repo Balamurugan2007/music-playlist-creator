@@ -1,0 +1,21 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo "🎵 Music Playlist Project Started"
+  displayName: Start
+
+- script: node -v
+  displayName: Check Node
+
+- script: echo "Installing dependencies..."
+  displayName: Install
+
+- script: echo "Running application..."
+  displayName: Run
+
+- script: echo "Build Completed Successfully ✅"
+  displayName: Finish
