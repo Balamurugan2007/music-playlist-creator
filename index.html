@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Style Music App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #121212;
+            color: white;
+        }
+
+        header {
+            padding: 20px;
+            font-size: 26px;
+            background: #1db954;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #000;
+            padding: 20px;
+        }
+
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .song {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 10px 0;
+            background: #181818;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .song:hover {
+            background: #1db954;
+        }
+
+        .controls button {
+            margin-left: 5px;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .play { background: #1db954; color: white; }
+        .fav { background: #ff4d6d; color: white; }
+        .delete { background: #ff0000; color: white; }
+
+        video {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .fav-list {
+            margin-top: 20px;
+        }
+
+        h3 {
+            border-bottom: 1px solid gray;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>🎧 My Spotify Clone</header>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Upload Songs</h3>
+        <input type="file" id="fileInput" multiple accept="audio/*,video/*">
+
+        <div class="fav-list">
+            <h3>❤️ Favorites</h3>
+            <div id="favorites"></div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <h2>🎵 Playlist</h2>
+        <div id="playlist"></div>
+
+        <video id="player" controls></video>
+    </div>
+
+</div>
+
+<script>
+let playlist = [];
+let favorites = [];
+
+document.getElementById("fileInput").addEventListener("change", function(e) {
+    const files = e.target.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const fileURL = URL.createObjectURL(files[i]);
+
+        playlist.push({
+            name: files[i].name,
+            url: fileURL,
+            fav: false
+        });
+    }
+
+    displayPlaylist();
+});
+
+function displayPlaylist() {
+    const container = document.getElementById("playlist");
+    container.innerHTML = "";
+
+    playlist.forEach((song, index) => {
+        const div = document.createElement("div");
+        div.className = "song";
+
+        div.innerHTML = `
+            <span>${song.name}</span>
+            <div class="controls">
+                <button class="play" onclick="playSong('${song.url}')">▶</button>
+                <button class="fav" onclick="toggleFav(${index})">❤️</button>
+                <button class="delete" onclick="deleteSong(${index})">🗑</button>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+
+    displayFavorites();
+}
+
+function playSong(url) {
+    const player = document.getElementById("player");
+    player.src = url;
+    player.play();
+}
+
+function deleteSong(index) {
+    playlist.splice(index, 1);
+    displayPlaylist();
+}
+
+function toggleFav(index) {
+    playlist[index].fav = !playlist[index].fav;
+    displayPlaylist();
+}
+
+function displayFavorites() {
+    const favDiv = document.getElementById("favorites");
+    favDiv.innerHTML = "";
+
+    playlist.forEach(song => {
+        if (song.fav) {
+            const div = document.createElement("div");
+            div.className = "song";
+            div.innerText = song.name;
+
+            div.onclick = () => playSong(song.url);
+
+            favDiv.appendChild(div);
+        }
+    });
+}
+</script>
+
+</body>
+</html>
